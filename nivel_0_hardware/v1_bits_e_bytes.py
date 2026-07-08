@@ -150,5 +150,10 @@ for binario in lista:
     print(f'{binario} em binário = {decimal} em decimal')
 
 
-            
+# -----------------------------------------------------------------------------
+# ASCII — Como letras viram números
+# -----------------------------------------------------------------------------
+# A tabela ASCII associa cada caractere a um inteiro de 0 a 127.
+# ord('A') retorna o código ASCII. chr(65) retorna 'A'.
+
             

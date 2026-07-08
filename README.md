@@ -2,6 +2,8 @@
 
 > Do transistor ao interpretador. Cada camada construída à mão, sem atalhos.
 
+**[→ Ver apresentação completa](https://pedro-2077.github.io/ZeroPy/)**
+
 Python parece mágica até você ver o que está por baixo. Este projeto desce todas as camadas — bits, bytes, memória, CPU, objetos, compilador — até construir um interpretador funcional do zero.
 
 Não usamos `bin()`, não importamos parsers prontos, não chamamos `eval()`. Cada peça é implementada para entender exatamente o que acontece por baixo.
