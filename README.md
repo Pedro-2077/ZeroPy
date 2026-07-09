@@ -16,7 +16,7 @@ Não usamos `bin()`, não importamos parsers prontos, não chamamos `eval()`. Ca
 
 | Arquivo | Conteúdo | Status |
 |---|---|---|
-| `v1_bits_e_bytes.py` | Binário, ASCII, UTF-8, operações bit a bit | ✅ Completo |
+| `v1_bits_e_bytes.py` | Binário, ASCII, UTF-8, operações bit a bit e deslocamento | ✅ Completo |
 | `v2_memoria.py` | Simulador de RAM com alocador e free list | 🔜 Em breve |
 | `v3_alu.py` | Unidade Lógico-Aritmética com flags ZF/SF/CF/OF | 🔜 Em breve |
 | `v4_cpu.py` | CPU com ciclo Fetch-Decode-Execute | 🔜 Em breve |

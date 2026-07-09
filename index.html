@@ -1,443 +1,788 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ZeroPy — Criando o Python do Zero</title>
-  <meta name="description" content="Do transistor ao interpretador. Cada camada construída à mão, sem atalhos.">
-  <style>
-    :root {
-      --bg:          #080C14;
-      --surface:     #0E1525;
-      --surface2:    #141E33;
-      --border:      #1C2D4A;
-      --text:        #D8E6F7;
-      --muted:       #4D6480;
-      --accent:      #F59E0B;
-      --accent-dim:  #78350F;
-      --green:       #22C55E;
-      --green-dim:   #14532D;
-      --code-bg:     #0A1020;
-      --tag-bg:      #0F1D38;
-    }
-    @media (prefers-color-scheme: light) {
-      :root {
-        --bg:          #F5F7FA;
-        --surface:     #FFFFFF;
-        --surface2:    #EEF2F8;
-        --border:      #D1DBE8;
-        --text:        #0D1829;
-        --muted:       #6B80A0;
-        --accent:      #B45309;
-        --accent-dim:  #FEF3C7;
-        --green:       #16A34A;
-        --green-dim:   #DCFCE7;
-        --code-bg:     #1E293B;
-        --tag-bg:      #EFF6FF;
-      }
-    }
-    :root[data-theme="dark"] {
-      --bg: #080C14; --surface: #0E1525; --surface2: #141E33;
-      --border: #1C2D4A; --text: #D8E6F7; --muted: #4D6480;
-      --accent: #F59E0B; --accent-dim: #78350F;
-      --green: #22C55E; --green-dim: #14532D;
-      --code-bg: #0A1020; --tag-bg: #0F1D38;
-    }
-    :root[data-theme="light"] {
-      --bg: #F5F7FA; --surface: #FFFFFF; --surface2: #EEF2F8;
-      --border: #D1DBE8; --text: #0D1829; --muted: #6B80A0;
-      --accent: #B45309; --accent-dim: #FEF3C7;
-      --green: #16A34A; --green-dim: #DCFCE7;
-      --code-bg: #1E293B; --tag-bg: #EFF6FF;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ZeroPy — Criando o Python do Zero</title>
+<meta name="description" content="Do transistor ao interpretador. Cada camada construída à mão, sem atalhos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ══ TOKENS ══ */
+:root {
+  --bg:#080C14; --sf:#0E1525; --sf2:#141E33; --bd:#1C2D4A;
+  --tx:#D8E6F7; --mu:#4D6480; --mu2:#8090B0;
+  --ac:#F59E0B; --acd:rgba(245,158,11,.12); --acg:rgba(245,158,11,.4);
+  --cbg:#050A16;
+}
+@media(prefers-color-scheme:light){:root{
+  --bg:#EFF3FB; --sf:#FFFFFF; --sf2:#E4EAF5; --bd:#C5D0E5;
+  --tx:#0D1829; --mu:#6B80A0; --mu2:#7B8DAF;
+  --ac:#B45309; --acd:rgba(180,83,9,.1); --acg:rgba(180,83,9,.38);
+  --cbg:#1A2540;
+}}
+:root[data-theme="dark"]{
+  --bg:#080C14; --sf:#0E1525; --sf2:#141E33; --bd:#1C2D4A;
+  --tx:#D8E6F7; --mu:#4D6480; --mu2:#8090B0;
+  --ac:#F59E0B; --acd:rgba(245,158,11,.12); --acg:rgba(245,158,11,.4);
+  --cbg:#050A16;
+}
+:root[data-theme="light"]{
+  --bg:#EFF3FB; --sf:#FFFFFF; --sf2:#E4EAF5; --bd:#C5D0E5;
+  --tx:#0D1829; --mu:#6B80A0; --mu2:#7B8DAF;
+  --ac:#B45309; --acd:rgba(180,83,9,.1); --acg:rgba(180,83,9,.38);
+  --cbg:#1A2540;
+}
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      font-size: 0.9375rem;
-      line-height: 1.7;
-      padding: 2rem 1rem 4rem;
-      transition: background 0.2s, color 0.2s;
-    }
-    .page { max-width: 720px; margin: 0 auto; }
+/* Layer colors */
+[data-l="0"]{--lc:#F59E0B;--ld:rgba(245,158,11,.1);--lg:rgba(245,158,11,.4);}
+[data-l="1"]{--lc:#22C55E;--ld:rgba(34,197,94,.1); --lg:rgba(34,197,94,.4);}
+[data-l="2"]{--lc:#60A5FA;--ld:rgba(96,165,250,.1); --lg:rgba(96,165,250,.4);}
+[data-l="3"]{--lc:#A78BFA;--ld:rgba(167,139,250,.1);--lg:rgba(167,139,250,.4);}
+[data-l="4"]{--lc:#F472B6;--ld:rgba(244,114,182,.1);--lg:rgba(244,114,182,.4);}
+[data-l="5"]{--lc:#FF7C3A;--ld:rgba(255,124,58,.1); --lg:rgba(255,124,58,.4);}
 
-    /* Nav */
-    .topnav {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      display: flex;
-      gap: 0.5rem;
-      z-index: 10;
-    }
-    .topnav a, .topnav button {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      padding: 0.35rem 0.75rem;
-      font-size: 0.72rem;
-      font-family: 'Courier New', monospace;
-      cursor: pointer;
-      letter-spacing: 0.05em;
-      text-decoration: none;
-      transition: color 0.15s, border-color 0.15s;
-    }
-    .topnav a:hover, .topnav button:hover { color: var(--accent); border-color: var(--accent); }
+:root[data-theme="light"] [data-l="0"]{--lc:#B45309;--ld:rgba(180,83,9,.08);}
+:root[data-theme="light"] [data-l="1"]{--lc:#16A34A;--ld:rgba(22,163,74,.08);}
+:root[data-theme="light"] [data-l="2"]{--lc:#2563EB;--ld:rgba(37,99,235,.08);}
+:root[data-theme="light"] [data-l="3"]{--lc:#7C3AED;--ld:rgba(124,58,237,.08);}
+:root[data-theme="light"] [data-l="4"]{--lc:#DB2777;--ld:rgba(219,39,119,.08);}
+:root[data-theme="light"] [data-l="5"]{--lc:#EA580C;--ld:rgba(234,88,12,.08);}
+@media(prefers-color-scheme:light){
+  [data-l="0"]{--lc:#B45309;--ld:rgba(180,83,9,.08);}
+  [data-l="1"]{--lc:#16A34A;--ld:rgba(22,163,74,.08);}
+  [data-l="2"]{--lc:#2563EB;--ld:rgba(37,99,235,.08);}
+  [data-l="3"]{--lc:#7C3AED;--ld:rgba(124,58,237,.08);}
+  [data-l="4"]{--lc:#DB2777;--ld:rgba(219,39,119,.08);}
+  [data-l="5"]{--lc:#EA580C;--ld:rgba(234,88,12,.08);}
+}
 
-    /* Hero */
-    .hero {
-      border-left: 3px solid var(--accent);
-      padding: 2rem 0 2rem 1.5rem;
-      margin-bottom: 2.5rem;
-    }
-    .hero-label {
-      font-family: 'Courier New', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 0.75rem;
-    }
-    .hero h1 {
-      font-family: 'Courier New', monospace;
-      font-size: clamp(1.75rem, 5vw, 2.5rem);
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.1;
-      margin-bottom: 0.75rem;
-      letter-spacing: -0.02em;
-    }
-    .hero h1 span { color: var(--accent); }
-    .hero-tagline {
-      font-size: 1rem;
-      color: var(--muted);
-      font-style: italic;
-      margin-bottom: 1.25rem;
-    }
-    .hero-desc {
-      font-size: 0.9375rem;
-      color: var(--text);
-      max-width: 560px;
-      line-height: 1.75;
-    }
-    .hero-desc code {
-      font-family: 'Courier New', monospace;
-      font-size: 0.85em;
-      background: var(--tag-bg);
-      color: var(--accent);
-      padding: 0.1em 0.35em;
-    }
+/* ══ RESET ══ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px;}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--bg);color:var(--tx);
+  font-size:.9375rem;line-height:1.7;
+  transition:background .2s,color .2s;
+}
 
-    hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+/* ══ NAV ══ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px 28px;
+  background:rgba(8,12,20,.92);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--bd);
+}
+:root[data-theme="light"] nav{background:rgba(239,243,251,.93);}
+@media(prefers-color-scheme:light){nav{background:rgba(239,243,251,.93);}}
+.nav-logo{
+  font-family:'JetBrains Mono',monospace;font-size:.78rem;
+  font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mu2);
+  white-space:nowrap;text-decoration:none;
+}
+.nav-logo span{color:var(--ac);}
+.nav-anchors{display:flex;gap:2px;flex-wrap:wrap;}
+.nanc{
+  padding:5px 13px;border-radius:99px;font-size:.72rem;font-weight:600;
+  color:var(--mu);background:transparent;border:1px solid transparent;
+  text-decoration:none;transition:all .18s;cursor:pointer;
+}
+.nanc:hover{color:var(--tx);background:var(--sf2);border-color:var(--bd);}
+.nanc.active{color:var(--ac);background:var(--acd);border-color:var(--acg);}
+.nav-right{display:flex;gap:6px;}
+.nbtn{
+  background:var(--sf);border:1px solid var(--bd);color:var(--mu);
+  padding:.3rem .7rem;font-size:.72rem;font-family:'JetBrains Mono',monospace;
+  cursor:pointer;transition:color .15s,border-color .15s;border-radius:6px;
+  text-decoration:none;display:inline-block;
+}
+.nbtn:hover{color:var(--ac);border-color:var(--ac);}
 
-    h2 {
-      font-family: 'Courier New', monospace;
-      font-size: 0.75rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    h2::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+/* ══ LAYOUT ══ */
+.wrap{max-width:900px;margin:0 auto;padding:0 24px;}
+section{padding:88px 0 0;scroll-margin-top:60px;}
+section:last-of-type{padding-bottom:80px;}
 
-    h3 {
-      font-family: 'Courier New', monospace;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      margin: 1.75rem 0 0.875rem;
-    }
+/* ══ HERO ══ */
+.hero{
+  min-height:calc(100vh - 58px);display:flex;flex-direction:column;
+  justify-content:center;padding:100px 0 72px;
+  border-bottom:1px solid var(--bd);
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:7px;margin-bottom:14px;
+  font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--mu2);
+}
+.edot{width:5px;height:5px;border-radius:50%;background:var(--ac);}
+h1{
+  font-family:'JetBrains Mono',monospace;
+  font-size:clamp(2.4rem,6vw,4rem);font-weight:700;
+  color:var(--tx);line-height:1.05;letter-spacing:-.03em;
+  margin-bottom:18px;text-wrap:balance;
+}
+h1 .hl{color:var(--ac);}
+.hero-lead{font-size:1.05rem;color:var(--mu2);line-height:1.7;max-width:580px;margin-bottom:12px;}
+.hero-desc{font-size:.9375rem;color:var(--tx);line-height:1.8;max-width:600px;margin-bottom:36px;}
+.hero-desc code,.ic{
+  font-family:'JetBrains Mono',monospace;font-size:.82em;
+  background:var(--acd);color:var(--ac);padding:.1em .35em;border-radius:3px;
+}
+.hero-cta{display:flex;gap:10px;flex-wrap:wrap;}
+.btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:11px 22px;border-radius:10px;font-size:.875rem;font-weight:600;
+  border:1px solid var(--bd);background:transparent;color:var(--tx);
+  cursor:pointer;transition:all .18s;font-family:'Inter',system-ui,sans-serif;
+  text-decoration:none;
+}
+.btn:hover{background:var(--sf2);}
+.btn.primary{background:var(--acd);border-color:var(--acg);color:var(--ac);}
+.btn.primary:hover{filter:brightness(1.08);}
 
-    .table-wrap { overflow-x: auto; margin-bottom: 0.25rem; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-    thead tr { border-bottom: 1px solid var(--border); }
-    th {
-      font-family: 'Courier New', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      text-align: left;
-      padding: 0.5rem 1rem 0.5rem 0;
-      font-weight: 400;
-    }
-    td {
-      padding: 0.6rem 1rem 0.6rem 0;
-      vertical-align: top;
-      border-bottom: 1px solid var(--border);
-      color: var(--text);
-      line-height: 1.5;
-    }
-    td:first-child { white-space: nowrap; }
-    td code {
-      font-family: 'Courier New', monospace;
-      font-size: 0.8rem;
-      color: var(--accent);
-      background: var(--tag-bg);
-      padding: 0.15em 0.4em;
-    }
-    .status-done {
-      display: inline-flex; align-items: center; gap: 0.35rem;
-      font-family: 'Courier New', monospace; font-size: 0.72rem;
-      letter-spacing: 0.05em; color: var(--green);
-      background: var(--green-dim); padding: 0.2em 0.6em; white-space: nowrap;
-    }
-    .status-soon {
-      display: inline-flex; align-items: center; gap: 0.35rem;
-      font-family: 'Courier New', monospace; font-size: 0.72rem;
-      letter-spacing: 0.05em; color: var(--muted);
-      background: var(--surface2); padding: 0.2em 0.6em; white-space: nowrap;
-    }
-    tr:last-child td { border-bottom: none; }
+/* ══ SECTION HEADER ══ */
+.sec-title{
+  font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--mu);margin-bottom:10px;display:flex;align-items:center;gap:10px;
+}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--bd);}
+.sec-lead{font-size:.9rem;color:var(--mu2);line-height:1.65;margin-bottom:28px;max-width:640px;}
 
-    .tree {
-      background: var(--code-bg);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--border);
-      padding: 1.25rem 1.5rem;
-      font-family: 'Courier New', monospace;
-      font-size: 0.82rem;
-      line-height: 1.9;
-      color: var(--text);
-      overflow-x: auto;
-    }
-    .tree .dir { color: var(--accent); }
-    .tree .comment { color: var(--muted); }
+hr.divider{border:none;border-top:1px solid var(--bd);margin:0;}
 
-    .code-block {
-      background: var(--code-bg);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--accent);
-      padding: 1.25rem 1.5rem;
-      font-family: 'Courier New', monospace;
-      font-size: 0.82rem;
-      line-height: 1.8;
-      color: var(--text);
-      overflow-x: auto;
-      margin: 0.75rem 0;
-    }
-    .code-block .prompt { color: var(--accent); user-select: none; }
-    .code-block .comment { color: var(--muted); }
+/* ══ STACK ══ */
+.stack-stage{display:flex;align-items:flex-start;gap:32px;flex-wrap:wrap;margin-top:28px;}
+.stack-col{flex:0 0 auto;display:flex;flex-direction:column;gap:6px;align-items:center;width:min(100%,440px);}
+.sbar{
+  border-radius:10px;height:52px;cursor:pointer;
+  display:flex;align-items:center;gap:14px;padding:0 18px;
+  border:1px solid var(--lc);background:var(--ld);
+  box-shadow:none;transition:box-shadow .3s,filter .25s;
+  user-select:none;
+}
+.sbar:hover{box-shadow:0 0 16px var(--lg);filter:brightness(1.1);}
+.sbar.lit{box-shadow:0 0 22px var(--lg);filter:brightness(1.2);}
+.sbar-num{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;color:var(--lc);opacity:.7;min-width:18px;}
+.sbar-name{font-size:.82rem;font-weight:700;color:var(--lc);white-space:nowrap;}
+.sbar-sub{font-size:.72rem;color:var(--mu2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.stack-panel{flex:1;min-width:240px;max-width:380px;}
+.sp-hint{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:260px;color:var(--mu);text-align:center;gap:12px;
+  font-size:.875rem;line-height:1.6;border:1px dashed var(--bd);border-radius:14px;
+}
+.sp-hint .big{font-size:2.2rem;}
+.lcard{display:none;animation:fadeIn .25s ease;}
+.lcard.visible{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.lbadge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:4px 12px;border-radius:99px;margin-bottom:10px;
+  background:var(--ld);color:var(--lc);border:1px solid var(--lg);
+}
+.lbadge .bdot{width:5px;height:5px;border-radius:50%;background:var(--lc);}
+.lcard-title{font-size:1.5rem;font-weight:800;letter-spacing:-.02em;color:var(--lc);margin-bottom:3px;}
+.lcard-sub{font-size:.82rem;color:var(--mu);margin-bottom:14px;}
+.lcard-div{height:1px;background:var(--bd);margin-bottom:14px;}
+.lcard-items{display:flex;flex-direction:column;gap:9px;}
+.lcard-item{display:flex;gap:10px;align-items:flex-start;font-size:.83rem;line-height:1.5;color:var(--mu2);}
+.lcard-ic{width:28px;height:28px;border-radius:8px;background:var(--ld);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:1px;}
+.lcard-item strong{color:var(--tx);}
+.lcard-rule{margin-top:12px;padding:10px 14px;border-radius:9px;background:var(--ld);border-left:3px solid var(--lc);font-size:.8rem;color:var(--mu2);line-height:1.5;}
+.lcard-rule strong{color:var(--lc);}
 
-    .why-block {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--accent);
-      padding: 1.5rem;
-      margin: 1rem 0;
-    }
-    .why-block p { color: var(--text); line-height: 1.75; margin-bottom: 0.75rem; }
-    .why-block p:last-child { margin-bottom: 0; }
-    .why-block code {
-      font-family: 'Courier New', monospace;
-      font-size: 0.85em; color: var(--accent);
-      background: var(--tag-bg); padding: 0.1em 0.35em;
-    }
+/* ══ CARDS ══ */
+.cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:28px;}
+@media(max-width:600px){.cards-grid{grid-template-columns:1fr;}}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:13px;padding:18px;display:flex;gap:12px;transition:border-color .2s;}
+.card:hover{border-color:var(--mu2);}
+.card-ic{width:34px;height:34px;border-radius:9px;background:var(--sf2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.card-title{font-size:.875rem;font-weight:700;color:var(--tx);margin-bottom:3px;}
+.card-desc{font-size:.8rem;color:var(--mu2);line-height:1.55;}
 
-    .tech-list { display: flex; flex-direction: column; gap: 0.5rem; margin: 0.5rem 0; }
-    .tech-item { display: flex; align-items: baseline; gap: 0.75rem; font-size: 0.875rem; }
-    .tech-name {
-      font-family: 'Courier New', monospace; font-size: 0.8rem;
-      color: var(--accent); background: var(--tag-bg);
-      padding: 0.15em 0.5em; white-space: nowrap; flex-shrink: 0;
-    }
-    .tech-desc { color: var(--muted); }
+/* ══ HBOX ══ */
+.hbox{
+  background:var(--sf);border:1px solid var(--bd);border-left:3px solid var(--ac);
+  border-radius:0 11px 11px 0;padding:14px 18px;
+  font-size:.875rem;color:var(--mu2);line-height:1.65;margin-bottom:18px;
+}
+.hbox strong{color:var(--ac);}
 
-    .footer {
-      margin-top: 3rem; padding-top: 1.5rem;
-      border-top: 1px solid var(--border);
-      font-family: 'Courier New', monospace;
-      font-size: 0.72rem; letter-spacing: 0.08em;
-      color: var(--muted); text-transform: uppercase;
-    }
-  </style>
+/* ══ DEMO BOX ══ */
+.demo-box{background:var(--sf);border:1px solid var(--bd);border-radius:14px;overflow:hidden;margin-top:20px;}
+.demo-header{background:var(--sf2);border-bottom:1px solid var(--bd);padding:14px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.demo-header label{font-size:.72rem;font-weight:700;color:var(--mu);letter-spacing:.08em;text-transform:uppercase;}
+.demo-body{padding:20px;}
+
+.num-wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.num-in{
+  width:72px;background:var(--sf2);border:1px solid var(--bd);
+  color:var(--tx);font-family:'JetBrains Mono',monospace;font-size:1.1rem;
+  padding:.35rem .6rem;border-radius:7px;text-align:center;outline:none;transition:border-color .15s;
+}
+.num-in:focus{border-color:var(--ac);}
+.num-slide{
+  flex:1;min-width:120px;max-width:300px;
+  -webkit-appearance:none;appearance:none;height:6px;border-radius:3px;
+  background:var(--sf2);outline:none;cursor:pointer;
+}
+.num-slide::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:var(--ac);cursor:pointer;box-shadow:0 0 8px var(--acg);transition:transform .15s;}
+.num-slide::-webkit-slider-thumb:hover{transform:scale(1.2);}
+.num-slide::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--ac);cursor:pointer;border:none;}
+.bin-display{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:600;color:var(--ac);background:var(--acd);padding:.3rem .8rem;border-radius:7px;white-space:nowrap;}
+.char-chip{font-size:.8rem;color:var(--mu2);background:var(--sf2);padding:.25rem .6rem;border-radius:6px;border:1px solid var(--bd);font-family:'JetBrains Mono',monospace;}
+
+.bit-grid{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+.bit-cell{flex:1;min-width:44px;max-width:64px;height:64px;border-radius:9px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:1px solid var(--bd);transition:all .2s;}
+.bit-on{background:var(--acd);border-color:var(--acg);box-shadow:0 0 10px var(--acg);}
+.bit-off{background:var(--sf2);}
+.bit-val{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--ac);}
+.bit-off .bit-val{color:var(--mu);}
+.bit-pow{font-size:.62rem;color:var(--mu);font-family:'JetBrains Mono',monospace;}
+
+.steps-tbl-wrap{overflow-x:auto;}
+.steps-tbl{width:100%;border-collapse:collapse;font-size:.82rem;font-family:'JetBrains Mono',monospace;}
+.steps-tbl th{padding:7px 12px;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);border-bottom:1px solid var(--bd);text-align:left;}
+.steps-tbl td{padding:7px 12px;border-bottom:1px solid var(--bd);color:var(--mu2);}
+.steps-tbl tr:last-child td{border-bottom:none;}
+.steps-tbl .r1{color:#22C55E;font-weight:700;}
+.steps-tbl .r0{color:var(--mu);}
+.steps-tbl .arrow{color:var(--mu);font-size:.72rem;font-family:'Inter',system-ui,sans-serif;}
+
+/* ══ BIT OPS ══ */
+.ops-box{background:var(--sf);border:1px solid var(--bd);border-radius:14px;overflow:hidden;margin-top:20px;}
+.ops-controls{background:var(--sf2);border-bottom:1px solid var(--bd);padding:16px 20px;display:flex;gap:24px;flex-wrap:wrap;align-items:center;}
+.slider-group{display:flex;flex-direction:column;gap:6px;flex:1;min-width:160px;}
+.slider-label{display:flex;align-items:baseline;gap:8px;font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:600;color:var(--mu2);}
+.slider-label .val{font-size:1rem;color:var(--tx);}
+.slider-label .bin-sm{font-size:.72rem;color:var(--mu);}
+.ops-body{padding:20px;}
+.op-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+.op-tab{padding:7px 18px;border-radius:8px;font-size:.8rem;font-weight:600;border:1px solid var(--bd);background:transparent;color:var(--mu);cursor:pointer;transition:all .2s;font-family:'JetBrains Mono',monospace;}
+.op-tab:hover{color:var(--tx);border-color:var(--mu2);}
+.op-tab.active{color:var(--ac);border-color:var(--acg);background:var(--acd);}
+.op-display{display:flex;flex-direction:column;gap:8px;}
+.bitrow{display:flex;align-items:center;gap:12px;}
+.bitrow-label{font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;color:var(--mu);min-width:80px;text-align:right;}
+.bitrow-label.rl{color:var(--ac);}
+.bitrow-sep{height:1px;background:var(--bd);margin:4px 0;}
+.bitrow-cells{display:flex;gap:4px;}
+.brc{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:700;border:1px solid var(--bd);transition:all .2s;}
+.brc-on{background:var(--acd);color:var(--ac);border-color:var(--acg);}
+.brc-off{background:var(--sf2);color:var(--mu);}
+.brc-ron{background:rgba(34,197,94,.15);color:#22C55E;border-color:rgba(34,197,94,.4);}
+.brc-roff{background:var(--sf2);color:var(--mu);}
+.op-result-info{margin-top:14px;padding:12px 16px;background:var(--sf2);border-radius:9px;font-size:.875rem;color:var(--mu2);display:flex;gap:16px;flex-wrap:wrap;}
+.op-result-info strong{color:var(--tx);}
+.op-explain{margin-top:12px;padding:12px 16px;border-radius:9px;background:var(--acd);border-left:3px solid var(--ac);font-size:.82rem;color:var(--mu2);line-height:1.55;}
+.op-explain strong{color:var(--ac);}
+
+/* ══ ASCII ══ */
+.ascii-wrap{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;margin-top:20px;}
+.ascii-grid{display:grid;grid-template-columns:repeat(13,1fr);gap:4px;flex:0 0 auto;}
+@media(max-width:600px){.ascii-grid{grid-template-columns:repeat(9,1fr);}}
+.char-btn{width:36px;height:36px;border-radius:6px;border:1px solid var(--bd);background:var(--sf2);color:var(--mu2);font-size:.78rem;cursor:pointer;transition:all .18s;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;justify-content:center;font-weight:500;}
+.char-btn:hover{border-color:var(--ac);color:var(--ac);background:var(--acd);}
+.char-btn.selected{border-color:var(--ac);color:var(--ac);background:var(--acd);box-shadow:0 0 8px var(--acg);}
+.ascii-detail{flex:1;min-width:220px;}
+.ascii-hint{color:var(--mu);font-size:.875rem;padding:16px 0;}
+.ascii-info{display:none;animation:fadeIn .2s ease;}
+.ascii-info.visible{display:block;}
+.ascii-char-big{font-family:'JetBrains Mono',monospace;font-size:3rem;font-weight:700;color:var(--ac);line-height:1;margin-bottom:12px;}
+.ascii-rows{display:flex;flex-direction:column;gap:8px;}
+.ascii-row{display:flex;align-items:center;gap:10px;font-size:.875rem;}
+.ascii-row-label{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);min-width:64px;}
+.ascii-row-val{font-family:'JetBrains Mono',monospace;color:var(--tx);font-size:.9rem;}
+.bit-mini{display:flex;gap:3px;}
+.bit-m{width:22px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;}
+.bit-m.on{background:var(--acd);color:var(--ac);}
+.bit-m.off{background:var(--sf2);color:var(--mu);}
+
+/* ══ ROADMAP ══ */
+.level-head{display:flex;align-items:center;gap:10px;font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lc);margin:32px 0 10px;}
+.level-head::after{content:'';flex:1;height:1px;background:var(--bd);}
+.level-dot{width:8px;height:8px;border-radius:50%;background:var(--lc);box-shadow:0 0 6px var(--lc);flex-shrink:0;}
+.tbl-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--bd);background:var(--sf);}
+table{width:100%;border-collapse:collapse;font-size:.84rem;}
+thead tr{border-bottom:1px solid var(--bd);}
+th{padding:10px 14px;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);text-align:left;}
+td{padding:11px 14px;border-bottom:1px solid var(--bd);color:var(--mu2);vertical-align:top;line-height:1.5;}
+tr:last-child td{border-bottom:none;}
+td:first-child{color:var(--tx);font-weight:500;white-space:nowrap;}
+td code{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--ac);background:var(--acd);padding:.12em .38em;border-radius:3px;}
+.sdone{display:inline-flex;align-items:center;font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.04em;color:#22C55E;background:rgba(34,197,94,.1);padding:.2em .6em;border-radius:4px;white-space:nowrap;}
+.ssoon{display:inline-flex;align-items:center;font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.04em;color:var(--mu);background:var(--sf2);padding:.2em .6em;border-radius:4px;white-space:nowrap;}
+
+/* ══ CODE / TREE ══ */
+.cw{border-radius:12px;overflow:hidden;border:1px solid var(--bd);margin-top:20px;}
+.ct{display:flex;align-items:center;gap:6px;padding:9px 14px;background:var(--sf2);border-bottom:1px solid var(--bd);}
+.cd{width:10px;height:10px;border-radius:50%;}
+.cf{font-size:11px;color:var(--mu2);margin-left:auto;font-family:'JetBrains Mono',monospace;}
+pre{background:var(--cbg);padding:18px;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.85;color:#abb2bf;overflow-x:auto;}
+.prompt{color:var(--ac);user-select:none;}
+.cmt{color:#4a5263;font-style:italic;}
+.tree{background:var(--cbg);border:1px solid var(--bd);border-left:3px solid var(--bd);padding:18px 22px;font-family:'JetBrains Mono',monospace;font-size:.8rem;line-height:1.9;color:var(--tx);overflow-x:auto;border-radius:0 12px 12px 0;margin-top:20px;}
+.tree .dir{color:var(--ac);}
+.tree .tc{color:var(--mu);}
+.tech-list{display:flex;flex-direction:column;gap:8px;margin-top:16px;}
+.tech-item{display:flex;align-items:baseline;gap:10px;font-size:.875rem;}
+.tech-name{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--ac);background:var(--acd);padding:.15em .5em;border-radius:4px;white-space:nowrap;}
+.tech-desc{color:var(--mu2);}
+
+/* ══ FOOTER ══ */
+footer{padding:32px 0 48px;border-top:1px solid var(--bd);margin-top:80px;}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.footer-txt{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.08em;color:var(--mu);text-transform:uppercase;}
+.footer-link{color:var(--ac);text-decoration:none;}
+.footer-link:hover{text-decoration:underline;}
+
+@media(max-width:640px){
+  nav{padding:10px 16px;}
+  .nav-anchors{display:none;}
+  .wrap{padding:0 16px;}
+  h1{font-size:2rem;}
+}
+</style>
 </head>
 <body>
 
-<nav class="topnav">
-  <a href="https://github.com/Pedro-2077/ZeroPy" target="_blank">[ github ]</a>
-  <button onclick="toggle()" aria-label="Alternar tema">[ tema ]</button>
+<!-- ══ NAV ══ -->
+<nav>
+  <a class="nav-logo" href="#hero"><span>Zero</span>Py</a>
+  <div class="nav-anchors">
+    <a class="nanc" href="#camadas">Camadas</a>
+    <a class="nanc" href="#bits">Bits &amp; Bytes</a>
+    <a class="nanc" href="#roadmap">Roadmap</a>
+    <a class="nanc" href="#rodar">Como Rodar</a>
+  </div>
+  <div class="nav-right">
+    <a class="nbtn" href="https://github.com/Pedro-2077/ZeroPy" target="_blank">[ github ]</a>
+    <button class="nbtn" onclick="toggleTheme()">[ tema ]</button>
+  </div>
 </nav>
 
-<div class="page">
+<div class="wrap">
 
-  <header class="hero">
-    <div class="hero-label">// projeto</div>
-    <h1><span>Zero</span>Py</h1>
-    <p class="hero-tagline">Do transistor ao interpretador. Cada camada construída à mão, sem atalhos.</p>
+<!-- ══ HERO ══ -->
+<section id="hero" style="scroll-margin-top:0">
+  <div class="hero">
+    <div class="eyebrow"><span class="edot"></span>// projeto</div>
+    <h1><span class="hl">Zero</span>Py<br>Do transistor<br>ao interpretador.</h1>
+    <p class="hero-lead">Cada camada construída à mão, sem atalhos.</p>
     <p class="hero-desc">
       Python parece mágica até você ver o que está por baixo. Este projeto desce todas as camadas —
       bits, bytes, memória, CPU, objetos, compilador — até construir um interpretador funcional do zero.
       Sem usar <code>bin()</code>, sem importar parsers prontos, sem chamar <code>eval()</code>.
     </p>
-  </header>
-
-  <hr>
-
-  <section>
-    <h2>Roadmap</h2>
-
-    <h3>Nível 0 — Hardware</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Arquivo</th><th>Conteúdo</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td><code>v1_bits_e_bytes.py</code></td><td>Binário, ASCII, UTF-8, operações bit a bit</td><td><span class="status-done">✓ Completo</span></td></tr>
-          <tr><td><code>v2_memoria.py</code></td><td>Simulador de RAM com alocador e free list</td><td><span class="status-soon">— em breve</span></td></tr>
-          <tr><td><code>v3_alu.py</code></td><td>Unidade Lógico-Aritmética com flags ZF/SF/CF/OF</td><td><span class="status-soon">— em breve</span></td></tr>
-          <tr><td><code>v4_cpu.py</code></td><td>CPU com ciclo Fetch-Decode-Execute</td><td><span class="status-soon">— em breve</span></td></tr>
-          <tr><td><code>v6_assembly.py</code></td><td>Assembler: texto legível → bytecodes</td><td><span class="status-soon">— em breve</span></td></tr>
-          <tr><td><code>v7_hello_assembly.py</code></td><td>Hello World no hardware que construímos</td><td><span class="status-soon">— em breve</span></td></tr>
-        </tbody>
-      </table>
+    <div class="hero-cta">
+      <a class="btn primary" href="#bits">Ver demo: Bits &amp; Bytes ↓</a>
+      <a class="btn" href="https://github.com/Pedro-2077/ZeroPy" target="_blank">Ver no GitHub</a>
     </div>
+  </div>
+</section>
 
-    <h3>Nível 1 — Objetos</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Arquivo</th><th>Conteúdo</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td><code>v1_pyobject.py</code></td><td>PyObject, reference counting, INCREF/DECREF</td><td><span class="status-soon">— em breve</span></td></tr>
-          <tr><td><code>v2_tipos.py</code></td><td>PyLong, PyUnicode, PyList internamente</td><td><span class="status-soon">— em breve</span></td></tr>
-          <tr><td><code>v3_dict.py</code></td><td>Hash table implementada do zero</td><td><span class="status-soon">— em breve</span></td></tr>
-        </tbody>
-      </table>
+<hr class="divider">
+
+<!-- ══ CAMADAS ══ -->
+<section id="camadas">
+  <div class="sec-title">As camadas do Python</div>
+  <p class="sec-lead">Um interpretador é feito de camadas. O hardware executa tudo, mas você escreve Python. Entre uma coisa e outra, existem 6 camadas. Este projeto constrói cada uma do zero. Clique em qualquer nível.</p>
+
+  <div class="stack-stage">
+    <div class="stack-col">
+      <div class="sbar" data-l="5" id="sb5" style="width:42%" onclick="pickLayer(5)"><span class="sbar-num">5</span><span class="sbar-name">Avançado</span><span class="sbar-sub">GC, builtins</span></div>
+      <div class="sbar" data-l="4" id="sb4" style="width:54%" onclick="pickLayer(4)"><span class="sbar-num">4</span><span class="sbar-name">Máquina Virtual</span><span class="sbar-sub">eval loop</span></div>
+      <div class="sbar" data-l="3" id="sb3" style="width:66%" onclick="pickLayer(3)"><span class="sbar-num">3</span><span class="sbar-name">Compilador</span><span class="sbar-sub">bytecodes</span></div>
+      <div class="sbar" data-l="2" id="sb2" style="width:78%" onclick="pickLayer(2)"><span class="sbar-num">2</span><span class="sbar-name">Frontend</span><span class="sbar-sub">lexer, parser, AST</span></div>
+      <div class="sbar" data-l="1" id="sb1" style="width:89%" onclick="pickLayer(1)"><span class="sbar-num">1</span><span class="sbar-name">Objetos</span><span class="sbar-sub">PyObject, types, dict</span></div>
+      <div class="sbar" data-l="0" id="sb0" style="width:100%" onclick="pickLayer(0)"><span class="sbar-num">0</span><span class="sbar-name">Hardware</span><span class="sbar-sub">bits, memória, CPU, assembler</span></div>
     </div>
-
-    <h3>Nível 2 — Frontend</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Arquivo</th><th>Conteúdo</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td><code>v1_lexer.py</code></td><td>Tokenizador: código-fonte → tokens</td><td><span class="status-soon">— em breve</span></td></tr>
-          <tr><td><code>v2_parser.py</code></td><td>AST: tokens → árvore sintática</td><td><span class="status-soon">— em breve</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <h3>Nível 3 — Compilador</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Arquivo</th><th>Conteúdo</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td><code>v1_compilador.py</code></td><td>Caminha a AST e gera bytecodes</td><td><span class="status-soon">— em breve</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <h3>Nível 4 — Máquina Virtual</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Arquivo</th><th>Conteúdo</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td><code>v1_vm.py</code></td><td>Eval loop: executa bytecodes</td><td><span class="status-soon">— em breve</span></td></tr>
-          <tr><td><code>v2_frames.py</code></td><td>Call stack, frames e escopo de variáveis</td><td><span class="status-soon">— em breve</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <h3>Nível 5 — Avançado</h3>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Arquivo</th><th>Conteúdo</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td><code>v1_gc.py</code></td><td>Garbage collector com detecção de ciclos</td><td><span class="status-soon">— em breve</span></td></tr>
-          <tr><td><code>v2_builtins.py</code></td><td><code>print</code>, <code>len</code>, <code>range</code> implementados à mão</td><td><span class="status-soon">— em breve</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <hr>
-
-  <section>
-    <h2>Estrutura</h2>
-    <div class="tree">
-<span class="dir">ZeroPy/</span>
-├── <span class="dir">nivel_0_hardware/</span>    <span class="comment">← bits, memória, ALU, CPU, assembler</span>
-├── <span class="dir">nivel_1_objetos/</span>     <span class="comment">← PyObject, tipos primitivos, dicionário</span>
-├── <span class="dir">nivel_2_frontend/</span>    <span class="comment">← lexer, parser, árvore sintática</span>
-├── <span class="dir">nivel_3_compilador/</span>  <span class="comment">← geração de bytecodes</span>
-├── <span class="dir">nivel_4_vm/</span>          <span class="comment">← máquina virtual, call stack</span>
-├── <span class="dir">nivel_5_avancado/</span>    <span class="comment">← GC, builtins, módulos</span>
-└── <span class="dir">programas/</span>           <span class="comment">← programas .zpy no interpretador pronto</span></div>
-  </section>
-
-  <hr>
-
-  <section>
-    <h2>Como Rodar</h2>
-    <p style="color: var(--muted); font-size: 0.875rem; margin-bottom: 0.875rem;">
-      Nenhuma dependência externa. Python 3.10+ é suficiente.
-    </p>
-    <div class="code-block">
-<span class="comment"># Semana 1 — Bits e Bytes</span>
-<span class="prompt">$</span> python nivel_0_hardware/v1_bits_e_bytes.py</div>
-  </section>
-
-  <hr>
-
-  <section>
-    <h2>Por Que Construir à Mão?</h2>
-    <div class="why-block">
-      <p><code>bin(10)</code> retorna <code>'0b1010'</code>. Mas por quê? Como funciona internamente?</p>
-      <p>
-        Escrever a função você mesmo — dividindo por 2, coletando restos, invertendo —
-        transforma isso de resposta decorada em conhecimento que não some.
-        O mesmo vale para cada camada.
-      </p>
-      <p>
-        Quem entende o que o interpretador faz não tropeça no que Python
-        "faz por baixo dos panos" — porque já viu o pano.
-      </p>
-    </div>
-  </section>
-
-  <hr>
-
-  <section>
-    <h2>Tecnologias</h2>
-    <div class="tech-list">
-      <div class="tech-item">
-        <span class="tech-name">Python 3.10+</span>
-        <span class="tech-desc">a ferramenta usada para construir o interpretador</span>
+    <div class="stack-panel">
+      <div class="sp-hint" id="sp-hint"><div class="big">👆</div><p>Clique em qualquer<br>camada para ver<br>o que será construído</p></div>
+      <div class="lcard" data-l="0" id="lc0">
+        <div class="lbadge" data-l="0"><span class="bdot"></span>A fundação</div>
+        <div class="lcard-title">Hardware</div><div class="lcard-sub">Nível 0 — bits, bytes, memória, CPU</div><div class="lcard-div"></div>
+        <div class="lcard-items">
+          <div class="lcard-item"><div class="lcard-ic">⚡</div><div><strong>v1_bits_e_bytes.py</strong> — binário, ASCII, UTF-8, operações bit a bit e shift. ✅ Completo.</div></div>
+          <div class="lcard-item"><div class="lcard-ic">🧠</div><div><strong>v2_memoria.py</strong> — simulador de RAM com alocador e free list.</div></div>
+          <div class="lcard-item"><div class="lcard-ic">⚙️</div><div><strong>v4_cpu.py</strong> — CPU com ciclo Fetch → Decode → Execute.</div></div>
+        </div>
+        <div class="lcard-rule"><strong>Por que começar aqui?</strong> Tudo que Python faz — um <code class="ic">+</code>, uma string, um objeto — vira bits no hardware.</div>
       </div>
-      <div class="tech-item">
-        <span class="tech-name">ZeroPy (.zpy)</span>
-        <span class="tech-desc">a linguagem que está sendo criada</span>
+      <div class="lcard" data-l="1" id="lc1">
+        <div class="lbadge" data-l="1"><span class="bdot"></span>Segunda camada</div>
+        <div class="lcard-title">Objetos</div><div class="lcard-sub">Nível 1 — PyObject, tipos, hash table</div><div class="lcard-div"></div>
+        <div class="lcard-items">
+          <div class="lcard-item"><div class="lcard-ic">📦</div><div><strong>v1_pyobject.py</strong> — PyObject, reference counting, INCREF/DECREF.</div></div>
+          <div class="lcard-item"><div class="lcard-ic">🗂️</div><div><strong>v3_dict.py</strong> — hash table do zero. É assim que <code class="ic">{}</code> funciona.</div></div>
+        </div>
+        <div class="lcard-rule"><strong>Por que antes do código?</strong> Em Python, tudo é objeto. Precisamos de onde guardar dados antes de executar.</div>
+      </div>
+      <div class="lcard" data-l="2" id="lc2">
+        <div class="lbadge" data-l="2"><span class="bdot"></span>Terceira camada</div>
+        <div class="lcard-title">Frontend</div><div class="lcard-sub">Nível 2 — lexer, parser, AST</div><div class="lcard-div"></div>
+        <div class="lcard-items">
+          <div class="lcard-item"><div class="lcard-ic">✂️</div><div><strong>v1_lexer.py</strong> — tokenizador: código-fonte → tokens.</div></div>
+          <div class="lcard-item"><div class="lcard-ic">🌳</div><div><strong>v2_parser.py</strong> — constrói a AST a partir dos tokens.</div></div>
+        </div>
+        <div class="lcard-rule"><strong>O que é o frontend?</strong> Lê o texto Python e transforma em estrutura que o computador processa.</div>
+      </div>
+      <div class="lcard" data-l="3" id="lc3">
+        <div class="lbadge" data-l="3"><span class="bdot"></span>Quarta camada</div>
+        <div class="lcard-title">Compilador</div><div class="lcard-sub">Nível 3 — AST → bytecodes</div><div class="lcard-div"></div>
+        <div class="lcard-items">
+          <div class="lcard-item"><div class="lcard-ic">🏭</div><div><strong>v1_compilador.py</strong> — percorre a AST e gera bytecodes.</div></div>
+          <div class="lcard-item"><div class="lcard-ic">📜</div><div>Bytecodes: <code class="ic">LOAD_NAME</code>, <code class="ic">BINARY_ADD</code>, <code class="ic">CALL</code>.</div></div>
+        </div>
+        <div class="lcard-rule"><strong>Por que compilar?</strong> Bytecodes são mais rápidos de interpretar que texto puro.</div>
+      </div>
+      <div class="lcard" data-l="4" id="lc4">
+        <div class="lbadge" data-l="4"><span class="bdot"></span>Quinta camada</div>
+        <div class="lcard-title">Máquina Virtual</div><div class="lcard-sub">Nível 4 — eval loop, frames</div><div class="lcard-div"></div>
+        <div class="lcard-items">
+          <div class="lcard-item"><div class="lcard-ic">🔄</div><div><strong>v1_vm.py</strong> — o eval loop: lê bytecodes um por um e executa.</div></div>
+          <div class="lcard-item"><div class="lcard-ic">📚</div><div><strong>v2_frames.py</strong> — call stack, frames e escopo de variáveis.</div></div>
+        </div>
+        <div class="lcard-rule"><strong>O que é a VM?</strong> Cada função chamada cria um frame novo na call stack.</div>
+      </div>
+      <div class="lcard" data-l="5" id="lc5">
+        <div class="lbadge" data-l="5"><span class="bdot"></span>Topo da pilha</div>
+        <div class="lcard-title">Avançado</div><div class="lcard-sub">Nível 5 — GC, builtins</div><div class="lcard-div"></div>
+        <div class="lcard-items">
+          <div class="lcard-item"><div class="lcard-ic">🗑️</div><div><strong>v1_gc.py</strong> — garbage collector com detecção de ciclos.</div></div>
+          <div class="lcard-item"><div class="lcard-ic">🔧</div><div><strong>v2_builtins.py</strong> — <code class="ic">print</code>, <code class="ic">len</code>, <code class="ic">range</code> implementados à mão.</div></div>
+        </div>
+        <div class="lcard-rule"><strong>O resultado:</strong> programas <code class="ic">.zpy</code> rodando no interpretador que construímos.</div>
       </div>
     </div>
-  </section>
-
-  <div class="footer">
-    Projeto em desenvolvimento ativo — novos módulos adicionados semanalmente
   </div>
 
-</div>
+  <div class="cards-grid">
+    <div class="card"><div class="card-ic">🔍</div><div><div class="card-title">Entendimento real</div><div class="card-desc"><code class="ic">bin(10)</code> retorna <code class="ic">'0b1010'</code>. Implementar você mesmo transforma resposta decorada em conhecimento que não some.</div></div></div>
+    <div class="card"><div class="card-ic">🐛</div><div><div class="card-title">Debug mais profundo</div><div class="card-desc">Quem entende o que o interpretador faz não tropeça no que Python "faz por baixo" — porque já viu o pano.</div></div></div>
+    <div class="card"><div class="card-ic">🧱</div><div><div class="card-title">Sem caixa-preta</div><div class="card-desc">Cada algoritmo — da divisão binária ao eval loop — é construído e entendido. Sem atalhos.</div></div></div>
+    <div class="card"><div class="card-ic">🚀</div><div><div class="card-title">Diferencial de portfólio</div><div class="card-desc">Mostra que você entende o que acontece por baixo — não só "como usar a biblioteca".</div></div></div>
+  </div>
+</section>
+
+<hr class="divider" style="margin-top:80px">
+
+<!-- ══ BITS & BYTES ══ -->
+<section id="bits">
+  <div class="sec-title">v1_bits_e_bytes.py — Nível 0</div>
+  <p class="sec-lead">A base de tudo. Conversão decimal ↔ binário, tabela ASCII, operações bit a bit que a CPU executa diretamente. Interaja com o código ao vivo.</p>
+
+  <div class="hbox">O algoritmo divide o número por 2 repetidamente e coleta os <strong>restos</strong>. Lidos de trás para frente, esses restos formam o número binário.</div>
+  <div class="demo-box">
+    <div class="demo-header">
+      <label>Decimal → Binário</label>
+      <div class="num-wrap">
+        <input type="number" class="num-in" id="num-in" min="0" max="255" value="65">
+        <input type="range"  class="num-slide" id="num-slide" min="0" max="255" value="65">
+        <span class="bin-display" id="bin-result">01000001</span>
+        <span class="char-chip" id="char-info">ASCII: "A"</span>
+      </div>
+    </div>
+    <div class="demo-body">
+      <div class="bit-grid" id="bit-grid"></div>
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);margin-bottom:10px;">Passos da divisão por 2</div>
+      <div class="steps-tbl-wrap">
+        <table class="steps-tbl">
+          <thead><tr><th>n</th><th>operação</th><th>quociente</th><th>resto (bit)</th><th></th></tr></thead>
+          <tbody id="steps-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="hbox" style="margin-top:32px">A CPU opera sobre os bits diretamente. <strong>AND</strong>: 1 onde os dois são 1. <strong>OR</strong>: 1 onde algum é 1. <strong>XOR</strong>: 1 onde são diferentes. <strong>NOT</strong>: inverte tudo.</div>
+  <div class="ops-box">
+    <div class="ops-controls">
+      <div class="slider-group">
+        <div class="slider-label">a = <span class="val" id="a-val">204</span>&nbsp;<span class="bin-sm" id="a-bin">11001100</span></div>
+        <input type="range" class="num-slide" id="a-slide" min="0" max="255" value="204">
+      </div>
+      <div class="slider-group">
+        <div class="slider-label">b = <span class="val" id="b-val">170</span>&nbsp;<span class="bin-sm" id="b-bin">10101010</span></div>
+        <input type="range" class="num-slide" id="b-slide" min="0" max="255" value="170">
+      </div>
+    </div>
+    <div class="ops-body">
+      <div class="op-tabs">
+        <button class="op-tab active" id="tab-and" onclick="setOp('and')">AND &amp;</button>
+        <button class="op-tab" id="tab-or"  onclick="setOp('or')">OR |</button>
+        <button class="op-tab" id="tab-xor" onclick="setOp('xor')">XOR ^</button>
+        <button class="op-tab" id="tab-not" onclick="setOp('not')">NOT ~a</button>
+      </div>
+      <div class="op-display" id="op-display"></div>
+      <div class="op-result-info" id="op-result-info"></div>
+      <div class="op-explain" id="op-explain"></div>
+    </div>
+  </div>
+
+  <div class="hbox" style="margin-top:32px">Cada letra é um número. <strong>A = 65</strong>, <strong>a = 97</strong>, <strong>espaço = 32</strong>. <code class="ic">ord('A')</code> → 65, <code class="ic">chr(65)</code> → 'A'.</div>
+  <div class="ascii-wrap">
+    <div class="ascii-grid" id="ascii-grid"></div>
+    <div class="ascii-detail">
+      <div class="ascii-hint" id="ascii-hint">← clique num caractere</div>
+      <div class="ascii-info" id="ascii-info">
+        <div class="ascii-char-big" id="ascii-char-big">A</div>
+        <div class="ascii-rows">
+          <div class="ascii-row"><span class="ascii-row-label">Decimal</span><span class="ascii-row-val" id="asc-dec">65</span></div>
+          <div class="ascii-row"><span class="ascii-row-label">Hex</span><span class="ascii-row-val" id="asc-hex">0x41</span></div>
+          <div class="ascii-row"><span class="ascii-row-label">Binário</span><div class="bit-mini" id="asc-bits"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" style="margin-top:80px">
+
+<!-- ══ ROADMAP ══ -->
+<section id="roadmap">
+  <div class="sec-title">Roadmap</div>
+  <p class="sec-lead">Seis níveis, do hardware ao interpretador completo. Cada módulo pode ser estudado separadamente.</p>
+
+  <div class="level-head" data-l="0"><span class="level-dot" data-l="0"></span>Nível 0 — Hardware</div>
+  <div class="tbl-wrap"><table><thead><tr><th>Arquivo</th><th>Conteúdo</th><th>Status</th></tr></thead><tbody>
+    <tr><td><code>v1_bits_e_bytes.py</code></td><td>Binário, ASCII, UTF-8, operações bit a bit e deslocamento</td><td><span class="sdone">✓ Completo</span></td></tr>
+    <tr><td><code>v2_memoria.py</code></td><td>Simulador de RAM com alocador e free list</td><td><span class="ssoon">— em breve</span></td></tr>
+    <tr><td><code>v3_alu.py</code></td><td>Unidade Lógico-Aritmética com flags ZF/SF/CF/OF</td><td><span class="ssoon">— em breve</span></td></tr>
+    <tr><td><code>v4_cpu.py</code></td><td>CPU com ciclo Fetch-Decode-Execute</td><td><span class="ssoon">— em breve</span></td></tr>
+    <tr><td><code>v6_assembly.py</code></td><td>Assembler: texto legível → bytecodes</td><td><span class="ssoon">— em breve</span></td></tr>
+    <tr><td><code>v7_hello_assembly.py</code></td><td>Hello World no hardware que construímos</td><td><span class="ssoon">— em breve</span></td></tr>
+  </tbody></table></div>
+
+  <div class="level-head" data-l="1"><span class="level-dot" data-l="1"></span>Nível 1 — Objetos</div>
+  <div class="tbl-wrap"><table><thead><tr><th>Arquivo</th><th>Conteúdo</th><th>Status</th></tr></thead><tbody>
+    <tr><td><code>v1_pyobject.py</code></td><td>PyObject, reference counting, INCREF/DECREF</td><td><span class="ssoon">— em breve</span></td></tr>
+    <tr><td><code>v2_tipos.py</code></td><td>PyLong, PyUnicode, PyList internamente</td><td><span class="ssoon">— em breve</span></td></tr>
+    <tr><td><code>v3_dict.py</code></td><td>Hash table implementada do zero</td><td><span class="ssoon">— em breve</span></td></tr>
+  </tbody></table></div>
+
+  <div class="level-head" data-l="2"><span class="level-dot" data-l="2"></span>Nível 2 — Frontend</div>
+  <div class="tbl-wrap"><table><thead><tr><th>Arquivo</th><th>Conteúdo</th><th>Status</th></tr></thead><tbody>
+    <tr><td><code>v1_lexer.py</code></td><td>Tokenizador: código-fonte → tokens</td><td><span class="ssoon">— em breve</span></td></tr>
+    <tr><td><code>v2_parser.py</code></td><td>AST: tokens → árvore sintática abstrata</td><td><span class="ssoon">— em breve</span></td></tr>
+  </tbody></table></div>
+
+  <div class="level-head" data-l="3"><span class="level-dot" data-l="3"></span>Nível 3 — Compilador</div>
+  <div class="tbl-wrap"><table><thead><tr><th>Arquivo</th><th>Conteúdo</th><th>Status</th></tr></thead><tbody>
+    <tr><td><code>v1_compilador.py</code></td><td>Percorre a AST e gera bytecodes</td><td><span class="ssoon">— em breve</span></td></tr>
+  </tbody></table></div>
+
+  <div class="level-head" data-l="4"><span class="level-dot" data-l="4"></span>Nível 4 — Máquina Virtual</div>
+  <div class="tbl-wrap"><table><thead><tr><th>Arquivo</th><th>Conteúdo</th><th>Status</th></tr></thead><tbody>
+    <tr><td><code>v1_vm.py</code></td><td>Eval loop: executa bytecodes</td><td><span class="ssoon">— em breve</span></td></tr>
+    <tr><td><code>v2_frames.py</code></td><td>Call stack, frames e escopo de variáveis</td><td><span class="ssoon">— em breve</span></td></tr>
+  </tbody></table></div>
+
+  <div class="level-head" data-l="5"><span class="level-dot" data-l="5"></span>Nível 5 — Avançado</div>
+  <div class="tbl-wrap"><table><thead><tr><th>Arquivo</th><th>Conteúdo</th><th>Status</th></tr></thead><tbody>
+    <tr><td><code>v1_gc.py</code></td><td>Garbage collector com detecção de ciclos</td><td><span class="ssoon">— em breve</span></td></tr>
+    <tr><td><code>v2_builtins.py</code></td><td><code>print</code>, <code>len</code>, <code>range</code> implementados à mão</td><td><span class="ssoon">— em breve</span></td></tr>
+  </tbody></table></div>
+</section>
+
+<hr class="divider" style="margin-top:80px">
+
+<!-- ══ COMO RODAR ══ -->
+<section id="rodar">
+  <div class="sec-title">Como Rodar</div>
+  <p class="sec-lead">Nenhuma dependência externa. Python 3.10+ é suficiente.</p>
+
+  <div class="cw">
+    <div class="ct">
+      <div class="cd" style="background:#ff5f56"></div>
+      <div class="cd" style="background:#ffbd2e"></div>
+      <div class="cd" style="background:#27c93f"></div>
+      <span class="cf">terminal</span>
+    </div>
+    <pre><span class="cmt"># Clone o repositório</span>
+<span class="prompt">$</span> git clone https://github.com/Pedro-2077/ZeroPy.git
+<span class="prompt">$</span> cd ZeroPy
+
+<span class="cmt"># Nível 0 — Bits e Bytes (já disponível)</span>
+<span class="prompt">$</span> python nivel_0_hardware/v1_bits_e_bytes.py</pre>
+  </div>
+
+  <div class="tree">
+<span class="dir">ZeroPy/</span>
+├── <span class="dir">nivel_0_hardware/</span>    <span class="tc">← bits, memória, ALU, CPU, assembler</span>
+├── <span class="dir">nivel_1_objetos/</span>     <span class="tc">← PyObject, tipos primitivos, dicionário</span>
+├── <span class="dir">nivel_2_frontend/</span>    <span class="tc">← lexer, parser, árvore sintática</span>
+├── <span class="dir">nivel_3_compilador/</span>  <span class="tc">← geração de bytecodes</span>
+├── <span class="dir">nivel_4_vm/</span>          <span class="tc">← máquina virtual, call stack</span>
+├── <span class="dir">nivel_5_avancado/</span>    <span class="tc">← GC, builtins, módulos</span>
+└── <span class="dir">programas/</span>           <span class="tc">← programas .zpy no interpretador pronto</span></div>
+
+  <div class="tech-list">
+    <div class="tech-item"><span class="tech-name">Python 3.10+</span><span class="tech-desc">a ferramenta usada para construir o interpretador</span></div>
+    <div class="tech-item"><span class="tech-name">ZeroPy (.zpy)</span><span class="tech-desc">a linguagem sendo criada — rodará no interpretador que vamos construir</span></div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-inner">
+    <span class="footer-txt">Projeto em desenvolvimento ativo</span>
+    <a class="footer-link footer-txt" href="https://github.com/Pedro-2077/ZeroPy" target="_blank">github.com/Pedro-2077/ZeroPy</a>
+  </div>
+</footer>
+
+</div><!-- /wrap -->
 
 <script>
-  (function() {
-    const saved = localStorage.getItem('zeroPy-theme');
-    if (saved) document.documentElement.setAttribute('data-theme', saved);
-    else if (window.matchMedia('(prefers-color-scheme: light)').matches)
-      document.documentElement.setAttribute('data-theme', 'light');
-    else document.documentElement.setAttribute('data-theme', 'dark');
-  })();
-  function toggle() {
-    const root = document.documentElement;
-    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    localStorage.setItem('zeroPy-theme', next);
-  }
-</script>
+/* ── THEME ── */
+(function(){
+  const s=localStorage.getItem('zpy-theme');
+  if(s)document.documentElement.setAttribute('data-theme',s);
+  else if(window.matchMedia('(prefers-color-scheme:light)').matches)
+    document.documentElement.setAttribute('data-theme','light');
+  else document.documentElement.setAttribute('data-theme','dark');
+})();
+function toggleTheme(){
+  const r=document.documentElement;
+  const n=r.getAttribute('data-theme')==='dark'?'light':'dark';
+  r.setAttribute('data-theme',n);localStorage.setItem('zpy-theme',n);
+}
 
+/* ── NAV SCROLL SPY ── */
+const sections=['hero','camadas','bits','roadmap','rodar'];
+const anchors=document.querySelectorAll('.nanc');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      anchors.forEach(a=>a.classList.remove('active'));
+      const id=e.target.id;
+      const link=document.querySelector(`.nanc[href="#${id}"]`);
+      if(link)link.classList.add('active');
+    }
+  });
+},{rootMargin:'-40% 0px -55% 0px'});
+document.querySelectorAll('section[id]').forEach(s=>obs.observe(s));
+
+/* ── STACK ── */
+let locked=null;
+function pickLayer(n){
+  document.querySelectorAll('.sbar').forEach(b=>b.classList.remove('lit'));
+  document.querySelectorAll('.lcard').forEach(c=>c.classList.remove('visible'));
+  document.getElementById('sp-hint').style.display='';
+  if(locked===n){locked=null;return;}
+  locked=n;
+  document.getElementById('sb'+n).classList.add('lit');
+  document.getElementById('lc'+n).classList.add('visible');
+  document.getElementById('sp-hint').style.display='none';
+}
+
+/* ── BINARY CONVERTER ── */
+function toBin8(n){return(n&0xFF).toString(2).padStart(8,'0');}
+function getDivSteps(n){
+  if(n===0)return[{n:0,div:0,rem:0}];
+  const st=[];let c=n;
+  while(c>0){st.push({n:c,div:Math.floor(c/2),rem:c%2});c=Math.floor(c/2);}
+  return st;
+}
+function updateConverter(){
+  let n=parseInt(document.getElementById('num-in').value);
+  if(isNaN(n))n=0;
+  n=Math.max(0,Math.min(255,n));
+  document.getElementById('num-in').value=n;
+  document.getElementById('num-slide').value=n;
+  const bin=toBin8(n);
+  document.getElementById('bin-result').textContent=bin;
+  let ci='';
+  if(n>=32&&n<=126)ci='ASCII: "'+String.fromCharCode(n)+'"';
+  else if(n>127)ci='UTF-8 multi-byte';
+  else ci='controle';
+  document.getElementById('char-info').textContent=ci;
+  document.getElementById('bit-grid').innerHTML=bin.split('').map((b,i)=>{
+    const p=7-i;
+    return`<div class="bit-cell ${b==='1'?'bit-on':'bit-off'}"><div class="bit-val">${b}</div><div class="bit-pow">2<sup>${p}</sup></div></div>`;
+  }).join('');
+  const steps=getDivSteps(n);
+  document.getElementById('steps-tbody').innerHTML=steps.map((s,i)=>{
+    const last=i===steps.length-1;
+    return`<tr><td>${s.n}</td><td>${s.n} ÷ 2</td><td>= ${s.div}</td><td class="${s.rem?'r1':'r0'}">resto <strong>${s.rem}</strong></td><td class="arrow">${last?'← mais significativo':i===0?'← menos significativo':''}</td></tr>`;
+  }).join('')+`<tr><td colspan="5" style="color:var(--mu);font-size:.72rem;padding-top:10px">Restos de baixo para cima → <strong style="color:var(--ac)">${bin}</strong> = ${n}</td></tr>`;
+}
+document.getElementById('num-in').addEventListener('input',()=>{
+  document.getElementById('num-slide').value=document.getElementById('num-in').value;updateConverter();
+});
+document.getElementById('num-slide').addEventListener('input',()=>{
+  document.getElementById('num-in').value=document.getElementById('num-slide').value;updateConverter();
+});
+
+/* ── BIT OPS ── */
+let currentOp='and';
+function setOp(op){
+  currentOp=op;
+  document.querySelectorAll('.op-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+op).classList.add('active');
+  updateBitOps();
+}
+function makeBitRow(label,bits,type){
+  const cells=bits.map(b=>{
+    const cls=type==='result'?(b?'brc-ron':'brc-roff'):(b?'brc-on':'brc-off');
+    return`<div class="brc ${cls}">${b}</div>`;
+  }).join('');
+  return`<div class="bitrow"><span class="bitrow-label${type==='result'?' rl':''}">${label}</span><div class="bitrow-cells">${cells}</div></div>`;
+}
+function updateBitOps(){
+  const a=parseInt(document.getElementById('a-slide').value);
+  const b=parseInt(document.getElementById('b-slide').value);
+  document.getElementById('a-val').textContent=a;
+  document.getElementById('b-val').textContent=b;
+  document.getElementById('a-bin').textContent=toBin8(a);
+  document.getElementById('b-bin').textContent=toBin8(b);
+  const aBits=toBin8(a).split('').map(Number);
+  const bBits=toBin8(b).split('').map(Number);
+  let result,resLabel,explain;
+  switch(currentOp){
+    case'and':result=a&b;resLabel='a AND b';explain='<strong>AND</strong>: retorna 1 apenas onde os <strong>dois</strong> bits são 1. Usado para mascarar — zerar bits específicos.';break;
+    case'or': result=a|b;resLabel='a OR b'; explain='<strong>OR</strong>: retorna 1 onde <strong>algum</strong> bit é 1. Usado para ligar bits sem afetar os outros.';break;
+    case'xor':result=a^b;resLabel='a XOR b';explain='<strong>XOR</strong>: retorna 1 onde os bits são <strong>diferentes</strong>. Usado em criptografia e detecção de mudanças.';break;
+    case'not':result=(~a)&0xFF;resLabel='NOT a'; explain='<strong>NOT</strong>: inverte <strong>todos</strong> os bits de a. Equivale a 255 − a.';break;
+  }
+  const rBits=toBin8(result).split('').map(Number);
+  let html=makeBitRow('a  =',aBits,'a');
+  if(currentOp!=='not')html+=makeBitRow('b  =',bBits,'b');
+  html+=`<div class="bitrow-sep"></div>`;
+  html+=makeBitRow(resLabel+' =',rBits,'result');
+  document.getElementById('op-display').innerHTML=html;
+  document.getElementById('op-result-info').innerHTML=`<div>Resultado: <strong>${result}</strong></div><div>Binário: <strong>${toBin8(result)}</strong></div>`;
+  document.getElementById('op-explain').innerHTML=explain;
+}
+document.getElementById('a-slide').addEventListener('input',updateBitOps);
+document.getElementById('b-slide').addEventListener('input',updateBitOps);
+
+/* ── ASCII ── */
+(function buildAscii(){
+  const grid=document.getElementById('ascii-grid');
+  let html='';
+  for(let i=32;i<=126;i++){
+    const ch=i===32?'·':String.fromCharCode(i);
+    html+=`<button class="char-btn" data-code="${i}" onclick="selectChar(${i})" title="ASCII ${i}">${ch}</button>`;
+  }
+  grid.innerHTML=html;
+})();
+function selectChar(code){
+  document.querySelectorAll('.char-btn').forEach(b=>b.classList.remove('selected'));
+  document.querySelector(`.char-btn[data-code="${code}"]`)?.classList.add('selected');
+  const bin=toBin8(code);
+  document.getElementById('ascii-char-big').textContent=code===32?'·':String.fromCharCode(code);
+  document.getElementById('asc-dec').textContent=code;
+  document.getElementById('asc-hex').textContent='0x'+code.toString(16).toUpperCase().padStart(2,'0');
+  document.getElementById('asc-bits').innerHTML=bin.split('').map(b=>`<div class="bit-m ${b==='1'?'on':'off'}">${b}</div>`).join('');
+  document.getElementById('ascii-hint').style.display='none';
+  document.getElementById('ascii-info').classList.add('visible');
+}
+
+/* ── INIT ── */
+updateConverter();updateBitOps();selectChar(65);
+</script>
 </body>
 </html>
