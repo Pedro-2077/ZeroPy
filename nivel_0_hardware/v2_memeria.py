@@ -190,10 +190,11 @@ class Memoria:
         que esse valor cabe em 1 byte e que o endereço realmente
         existe dentro da nossa memória?
         """
-        if not (0 <= endereco < self._tamanho):
+        
+        if endereco < 0 or endereco >= self._tamanho:
             raise IndexError(f"Endereço {endereco} fora do intervalo da memória (0 a {self._tamanho - 1}).")
 
-        if not (0 <= valor <= 255):
+        if valor < 0 or valor > 255:
             raise ValueError(f"Byte deve ser 0-255, recebeu {valor}")
 
         self._dados[endereco] = valor
@@ -207,10 +208,49 @@ class Memoria:
         Como descobrir o que está guardado em um endereço específico?
         """
         
-        if not (0 <= endereco < self._tamanho):
+        if endereco < 0 or endereco >= self._tamanho:
             raise IndexError(f"Endereço {endereco} fora do intervalo da memória (0 a {self._tamanho - 1}).")
         
         return self._dados[endereco]
-
-
     
+# =============================================================================
+# DEMONSTRAÇÃO
+# =============================================================================
+    
+mem = Memoria(16)  # cria uma memória de 16 bytes
+
+print("\nEscrevendo alguns bytes:")
+mem.escrever_byte(0, 65) # escreve o byte 65 (ASCII 'A') no endereço 0
+mem.escrever_byte(1, 66) # escreve o byte 66 (ASCII 'B') no endereço 1
+mem.escrever_byte(2, 255) # escreve o byte 255 no endereço 2
+
+
+
+print(f'Endereço 0: {mem.ler_byte(0)}')
+print(f'Endereço 1: {mem.ler_byte(1)}')
+print(f'Endereço 2: {mem.ler_byte(2)}')
+
+
+print('\nTestando os Limites:')
+
+try:
+    mem.escrever_byte(0,355) # Invalido acima de 255
+except ValueError as erro:
+    print(f'Erro esperado: {erro}')
+
+
+try:
+    mem.ler_byte(100) #Invalido pois a memoria vai ate 16 bytes
+except IndexError as erro:
+    print(f'Erro esperado:{erro}')
+
+# =============================================================================
+# O QUE APRENDEMOS
+# =============================================================================
+#
+# • Uma memória precisa de duas operações básicas: ler e escrever.
+# • Escrever exige validar que o valor cabe em 1 byte (0-255).
+# • Tanto ler quanto escrever precisam validar que o endereço existe
+#   dentro dos limites da memória — assim como acontece de verdade.
+# =============================================================================
+
