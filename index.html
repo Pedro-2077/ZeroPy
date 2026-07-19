@@ -279,6 +279,34 @@ hr.divider{border:none;border-top:1px solid var(--bd);margin:0;}
 .op-explain{margin-top:12px;padding:12px 16px;border-radius:9px;background:var(--acd);border-left:3px solid var(--ac);font-size:.82rem;color:var(--mu2);line-height:1.55;}
 .op-explain strong{color:var(--ac);}
 
+/* ══ MEMÓRIA ══ */
+.mem-steps{background:var(--acd);border:1px solid var(--acg);border-radius:12px;padding:16px 18px;margin-bottom:20px;}
+.mem-steps-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px;}
+.mem-steps-counter{font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ac);}
+.mem-steps-nav{display:flex;gap:8px;}
+.mem-steps-title{font-size:1rem;font-weight:800;color:var(--tx);margin-bottom:6px;}
+.mem-steps-text{font-size:.85rem;color:var(--mu2);line-height:1.6;}
+.mem-steps-text code{font-family:'JetBrains Mono',monospace;font-size:.82em;background:var(--sf2);color:var(--ac);padding:.1em .35em;border-radius:3px;}
+.nbtn:disabled,.btn:disabled{opacity:.4;cursor:not-allowed;}
+.nbtn:disabled:hover{color:var(--mu);border-color:var(--bd);}
+.mem-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(30px,1fr));gap:4px;margin-bottom:20px;}
+.mem-cell{aspect-ratio:1;border-radius:6px;border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:700;cursor:default;transition:all .15s;}
+.mem-cell.free{background:var(--sf2);color:var(--mu);}
+.mem-cell.occ{cursor:pointer;}
+.mem-cell.occ:hover{filter:brightness(1.15);box-shadow:0 0 8px var(--lg);}
+.mem-controls{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px;}
+.mem-control-group{display:flex;flex-direction:column;gap:6px;}
+.mem-control-group label{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);}
+.mem-control-group .num-in{width:64px;}
+.mem-control-row{display:flex;gap:8px;align-items:center;}
+.mem-error{display:none;margin-bottom:14px;padding:10px 16px;border-radius:9px;background:rgba(239,68,68,.1);border-left:3px solid #EF4444;font-size:.82rem;color:var(--mu2);font-family:'JetBrains Mono',monospace;}
+.mem-error.visible{display:block;}
+.mem-panels{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:600px){.mem-panels{grid-template-columns:1fr;}}
+.mem-panel{background:var(--sf2);border:1px solid var(--bd);border-radius:10px;overflow:hidden;}
+.mem-panel-title{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);padding:8px 14px;border-bottom:1px solid var(--bd);}
+.mem-panel-body{padding:12px 14px;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:#abb2bf;white-space:pre-wrap;word-break:break-word;line-height:1.6;}
+
 /* ══ ASCII ══ */
 .ascii-wrap{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;margin-top:20px;}
 .ascii-grid{display:grid;grid-template-columns:repeat(13,1fr);gap:4px;flex:0 0 auto;}
@@ -314,6 +342,7 @@ td:first-child{color:var(--tx);font-weight:500;white-space:nowrap;}
 td code{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--ac);background:var(--acd);padding:.12em .38em;border-radius:3px;}
 .sdone{display:inline-flex;align-items:center;font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.04em;color:#22C55E;background:rgba(34,197,94,.1);padding:.2em .6em;border-radius:4px;white-space:nowrap;}
 .ssoon{display:inline-flex;align-items:center;font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.04em;color:var(--mu);background:var(--sf2);padding:.2em .6em;border-radius:4px;white-space:nowrap;}
+.sprog{display:inline-flex;align-items:center;font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.04em;color:#F59E0B;background:rgba(245,158,11,.1);padding:.2em .6em;border-radius:4px;white-space:nowrap;}
 
 /* ══ CODE / TREE ══ */
 .cw{border-radius:12px;overflow:hidden;border:1px solid var(--bd);margin-top:20px;}
@@ -354,6 +383,7 @@ footer{padding:32px 0 48px;border-top:1px solid var(--bd);margin-top:80px;}
   <div class="nav-anchors">
     <a class="nanc" href="#camadas">Camadas</a>
     <a class="nanc" href="#bits">Bits &amp; Bytes</a>
+    <a class="nanc" href="#memoria">Memória</a>
     <a class="nanc" href="#roadmap">Roadmap</a>
     <a class="nanc" href="#rodar">Como Rodar</a>
   </div>
@@ -406,7 +436,7 @@ footer{padding:32px 0 48px;border-top:1px solid var(--bd);margin-top:80px;}
         <div class="lcard-title">Hardware</div><div class="lcard-sub">Nível 0 — bits, bytes, memória, CPU</div><div class="lcard-div"></div>
         <div class="lcard-items">
           <div class="lcard-item"><div class="lcard-ic">⚡</div><div><strong>v1_bits_e_bytes.py</strong> — binário, ASCII, UTF-8, operações bit a bit e shift. ✅ Completo.</div></div>
-          <div class="lcard-item"><div class="lcard-ic">🧠</div><div><strong>v2_memoria.py</strong> — simulador de RAM com alocador e free list.</div></div>
+          <div class="lcard-item"><div class="lcard-ic">🧠</div><div><strong>v2_memoria.py</strong> — simulador de RAM com alocador first-fit, free list e liberação. 🔨 Em andamento (falta fusão de blocos). <a href="#memoria">Ver demo ↓</a></div></div>
           <div class="lcard-item"><div class="lcard-ic">⚙️</div><div><strong>v4_cpu.py</strong> — CPU com ciclo Fetch → Decode → Execute.</div></div>
         </div>
         <div class="lcard-rule"><strong>Por que começar aqui?</strong> Tudo que Python faz — um <code class="ic">+</code>, uma string, um objeto — vira bits no hardware.</div>
@@ -541,6 +571,76 @@ footer{padding:32px 0 48px;border-top:1px solid var(--bd);margin-top:80px;}
 
 <hr class="divider" style="margin-top:80px">
 
+<!-- ══ MEMÓRIA ══ -->
+<section id="memoria">
+  <div class="sec-title">v2_memoria.py — Nível 0</div>
+  <p class="sec-lead">Uma região de memória simulada com <code class="ic">bytearray</code>, administrada por um alocador <strong>first-fit</strong>: free list de blocos livres, registro de alocações, e liberação sem fusão de blocos (ainda). Escolha o tamanho da memória, aloque e libere blocos, e veja a fragmentação acontecer de verdade — exatamente como no código real.</p>
+
+  <div class="hbox">A memória nasce como <strong>um único bloco livre</strong>. <code class="ic">alocar(n)</code> percorre a free list e usa o primeiro bloco que couber. <code class="ic">liberar(endereço)</code> devolve o bloco à free list — mas <strong>sem fundir</strong> com vizinhos, então blocos livres podem ficar espalhados (fragmentação).</div>
+
+  <div class="demo-box">
+    <div class="demo-header">
+      <label>Tamanho da memória</label>
+      <div class="num-wrap">
+        <input type="number" class="num-in" id="mem-size-in" min="8" max="64" value="16">
+        <input type="range" class="num-slide" id="mem-size-slide" min="8" max="64" value="16">
+        <button class="nbtn" onclick="resetMemoria()">[ reiniciar ]</button>
+      </div>
+    </div>
+    <div class="demo-body">
+      <div class="mem-steps">
+        <div class="mem-steps-head">
+          <span class="mem-steps-counter" id="mem-step-counter">Passo 1 de 5</span>
+          <div class="mem-steps-nav">
+            <button class="nbtn" id="mem-step-prev" onclick="passoAnterior()">◀ Anterior</button>
+            <button class="nbtn" id="mem-step-next" onclick="passoProximo()">Próximo ▶</button>
+          </div>
+        </div>
+        <div class="mem-steps-title" id="mem-step-title"></div>
+        <div class="mem-steps-text" id="mem-step-text"></div>
+      </div>
+
+      <div class="mem-grid" id="mem-grid"></div>
+
+      <div class="mem-controls">
+        <div class="mem-control-group">
+          <label>Alocar (bytes)</label>
+          <div class="mem-control-row">
+            <input type="number" class="num-in" id="mem-alloc-size" min="1" max="64" value="4">
+            <button class="btn primary" onclick="fazAlocar()">alocar()</button>
+          </div>
+        </div>
+        <div class="mem-control-group">
+          <label>Liberar (endereço)</label>
+          <div class="mem-control-row">
+            <input type="number" class="num-in" id="mem-free-addr" min="0" max="63" value="0">
+            <button class="btn" onclick="fazLiberar()">liberar()</button>
+          </div>
+        </div>
+        <div class="mem-control-group">
+          <label>&nbsp;</label>
+          <button class="btn" onclick="demoFragmentacao()">Demonstrar fragmentação</button>
+        </div>
+      </div>
+
+      <div class="mem-error" id="mem-error"></div>
+
+      <div class="mem-panels">
+        <div class="mem-panel">
+          <div class="mem-panel-title">free_list</div>
+          <pre class="mem-panel-body" id="mem-freelist"></pre>
+        </div>
+        <div class="mem-panel">
+          <div class="mem-panel-title">alocacoes</div>
+          <pre class="mem-panel-body" id="mem-allocs"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider" style="margin-top:80px">
+
 <!-- ══ ROADMAP ══ -->
 <section id="roadmap">
   <div class="sec-title">Roadmap</div>
@@ -549,7 +649,7 @@ footer{padding:32px 0 48px;border-top:1px solid var(--bd);margin-top:80px;}
   <div class="level-head" data-l="0"><span class="level-dot" data-l="0"></span>Nível 0 — Hardware</div>
   <div class="tbl-wrap"><table><thead><tr><th>Arquivo</th><th>Conteúdo</th><th>Status</th></tr></thead><tbody>
     <tr><td><code>v1_bits_e_bytes.py</code></td><td>Binário, ASCII, UTF-8, operações bit a bit e deslocamento</td><td><span class="sdone">✓ Completo</span></td></tr>
-    <tr><td><code>v2_memoria.py</code></td><td>Simulador de RAM com alocador e free list</td><td><span class="ssoon">— em breve</span></td></tr>
+    <tr><td><code>v2_memoria.py</code></td><td>Simulador de RAM: bytearray, free list, alocador first-fit e liberação (fusão de blocos vem a seguir)</td><td><span class="sprog">🔨 em andamento</span></td></tr>
     <tr><td><code>v3_alu.py</code></td><td>Unidade Lógico-Aritmética com flags ZF/SF/CF/OF</td><td><span class="ssoon">— em breve</span></td></tr>
     <tr><td><code>v4_cpu.py</code></td><td>CPU com ciclo Fetch-Decode-Execute</td><td><span class="ssoon">— em breve</span></td></tr>
     <tr><td><code>v6_assembly.py</code></td><td>Assembler: texto legível → bytecodes</td><td><span class="ssoon">— em breve</span></td></tr>
@@ -651,7 +751,7 @@ function toggleTheme(){
 }
 
 /* ── NAV SCROLL SPY ── */
-const sections=['hero','camadas','bits','roadmap','rodar'];
+const sections=['hero','camadas','bits','memoria','roadmap','rodar'];
 const anchors=document.querySelectorAll('.nanc');
 const obs=new IntersectionObserver(entries=>{
   entries.forEach(e=>{
@@ -781,8 +881,217 @@ function selectChar(code){
   document.getElementById('ascii-info').classList.add('visible');
 }
 
+/* ── MEMÓRIA (espelha nivel_0_hardware/v2_memeria.py) ── */
+let memTamanho=16, memFreeList=[], memAlocacoes={}, memBlocos={}, memProximaLetra=0;
+const MEM_LETRAS='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+function resetMemoria(){
+  let n=parseInt(document.getElementById('mem-size-in').value);
+  if(isNaN(n))n=16;
+  n=Math.max(8,Math.min(64,n));
+  document.getElementById('mem-size-in').value=n;
+  document.getElementById('mem-size-slide').value=n;
+  memTamanho=n;
+  memFreeList=[[0,n]];       // no começo, tudo livre — igual ao __init__
+  memAlocacoes={};           // endereço → tamanho
+  memBlocos={};              // endereço → {letra, cor} (só para a visualização)
+  memProximaLetra=0;
+  document.getElementById('mem-free-addr').max=n-1;
+  document.getElementById('mem-alloc-size').max=n;
+  esconderErroMem();
+  renderMemoria();
+}
+
+// Espelha alocar(): first-fit — primeiro bloco livre que couber
+function memAlocar(tamanho){
+  for(let i=0;i<memFreeList.length;i++){
+    const [inicio,tamanhoLivre]=memFreeList[i];
+    if(tamanhoLivre>=tamanho){
+      const endereco=inicio;
+      if(tamanhoLivre===tamanho){
+        memFreeList.splice(i,1);
+      }else{
+        memFreeList[i]=[inicio+tamanho, tamanhoLivre-tamanho];
+      }
+      memAlocacoes[endereco]=tamanho;
+      const letra=MEM_LETRAS[memProximaLetra%MEM_LETRAS.length];
+      const cor=memProximaLetra%6;
+      memProximaLetra++;
+      memBlocos[endereco]={letra,cor,tamanho};
+      return endereco;
+    }
+  }
+  throw new Error(`Sem espaço livre suficiente para alocar ${tamanho} pedido`);
+}
+
+// Espelha liberar(): consulta alocacoes, remove, devolve à free list (sem fusão)
+function memLiberar(endereco){
+  if(!(endereco in memAlocacoes))
+    throw new Error(`O endereço ${endereco} não está alocado`);
+  const tamanho=memAlocacoes[endereco];
+  delete memAlocacoes[endereco];
+  delete memBlocos[endereco];
+  memFreeList.push([endereco,tamanho]);
+}
+
+function mostrarErroMem(msg){
+  const el=document.getElementById('mem-error');
+  el.textContent='Erro: '+msg;
+  el.classList.add('visible');
+}
+function esconderErroMem(){
+  document.getElementById('mem-error').classList.remove('visible');
+}
+
+function renderMemoria(){
+  // grid: um dono por endereço (letra do bloco, ou vazio se livre)
+  const dono=new Array(memTamanho).fill(null);
+  for(const enderecoStr in memAlocacoes){
+    const endereco=parseInt(enderecoStr);
+    const tamanho=memAlocacoes[endereco];
+    const info=memBlocos[endereco];
+    for(let i=0;i<tamanho;i++)dono[endereco+i]=info;
+  }
+  const grid=document.getElementById('mem-grid');
+  grid.innerHTML=dono.map((info,addr)=>{
+    if(info){
+      return `<div class="mem-cell occ" data-l="${info.cor}" style="background:var(--ld);border-color:var(--lg);color:var(--lc)" title="endereço ${addr} — bloco ${info.letra} (${info.tamanho} bytes) — clique para liberar" onclick="memCellClick(${addr})">${info.letra}</div>`;
+    }
+    return `<div class="mem-cell free" title="endereço ${addr} — livre">·</div>`;
+  }).join('');
+
+  document.getElementById('mem-freelist').textContent=
+    '['+memFreeList.map(b=>`(${b[0]}, ${b[1]})`).join(', ')+']';
+  const allocEntries=Object.entries(memAlocacoes);
+  document.getElementById('mem-allocs').textContent=
+    '{'+allocEntries.map(([e,t])=>`${e}: ${t}`).join(', ')+'}';
+}
+
+function memCellClick(addr){
+  // clicar num bloco alocado libera o bloco inteiro (acha o endereço de início dele)
+  let inicio=addr;
+  while(!(inicio in memAlocacoes) && inicio>=0)inicio--;
+  if(!(inicio in memAlocacoes))return;
+  document.getElementById('mem-free-addr').value=inicio;
+  fazLiberar();
+}
+
+function fazAlocar(){
+  esconderErroMem();
+  const tamanho=parseInt(document.getElementById('mem-alloc-size').value);
+  try{
+    const endereco=memAlocar(tamanho);
+    document.getElementById('mem-free-addr').value=endereco;
+    renderMemoria();
+  }catch(e){
+    mostrarErroMem(e.message);
+  }
+}
+
+function fazLiberar(){
+  esconderErroMem();
+  const endereco=parseInt(document.getElementById('mem-free-addr').value);
+  try{
+    memLiberar(endereco);
+    renderMemoria();
+  }catch(e){
+    mostrarErroMem(e.message);
+  }
+}
+
+// Reproduz a demonstração exata do arquivo real: aloca A(4) e B(6),
+// libera A, tenta alocar(8) — falha mesmo com 10 bytes livres no total,
+// porque estão em blocos separados (fragmentação).
+function demoFragmentacao(){
+  document.getElementById('mem-size-in').value=16;
+  document.getElementById('mem-size-slide').value=16;
+  resetMemoria();
+  const addrA=memAlocar(4);
+  memAlocar(6);
+  memLiberar(addrA);
+  renderMemoria();
+  try{
+    memAlocar(8);
+    renderMemoria();
+  }catch(e){
+    mostrarErroMem(e.message+' — mesmo havendo 4 + 6 = 10 bytes livres no total, eles estão em blocos separados. Isso é fragmentação.');
+  }
+}
+
+document.getElementById('mem-size-in').addEventListener('input',()=>{
+  document.getElementById('mem-size-slide').value=document.getElementById('mem-size-in').value;
+});
+document.getElementById('mem-size-slide').addEventListener('input',()=>{
+  document.getElementById('mem-size-in').value=document.getElementById('mem-size-slide').value;
+});
+document.getElementById('mem-size-slide').addEventListener('change',resetMemoria);
+
+/* ── MEMÓRIA: passo a passo guiado (micro → macro) ── */
+const MEM_PASSOS=[
+  {
+    titulo:'1. A memória nasce vazia',
+    texto:'Um <code>bytearray</code> de 16 bytes é criado, todo zerado. A <code>free_list</code> começa com um único bloco livre: <code>[(0, 16)]</code>. Repare: a free_list não é a memória — é só um mapa à parte de onde há espaço.',
+    acoes:[]
+  },
+  {
+    titulo:'2. alocar(4) — reservamos o objeto A',
+    texto:'O alocador percorre a free_list e encontra o bloco (0, 16). Como sobra espaço, ele encolhe: a free_list vira <code>[(4, 12)]</code>, e <code>alocacoes</code> ganha a entrada <code>0: 4</code> — um cadastro dizendo "no endereço 0 há 4 bytes reservados".',
+    acoes:[{op:'alocar',tamanho:4}]
+  },
+  {
+    titulo:'3. alocar(6) — reservamos o objeto B',
+    texto:'Mesmo processo: o único bloco livre agora é (4, 12), que também sobra espaço depois de reservar 6 bytes. A free_list vira <code>[(10, 6)]</code>, e <code>alocacoes</code> passa a ter os dois objetos: <code>{0: 4, 4: 6}</code>.',
+    acoes:[{op:'alocar',tamanho:4},{op:'alocar',tamanho:6}]
+  },
+  {
+    titulo:'4. liberar(0) — o objeto A não existe mais',
+    texto:'<code>liberar()</code> consulta <code>alocacoes[0]</code> — não como "o item na posição 0", mas como "existe uma chave 0 nesse cadastro?". Encontra 4, remove o registro, e devolve <code>(0, 4)</code> para a free_list, sem fundir com vizinhos. Importante: os bytes que estavam ali <strong>não são apagados</strong> — só deixam de pertencer a alguém.',
+    acoes:[{op:'alocar',tamanho:4},{op:'alocar',tamanho:6},{op:'liberar',endereco:0}]
+  },
+  {
+    titulo:'5. alocar(8) falha — a fragmentação aparece',
+    texto:'Existem 4 + 6 = 10 bytes livres no total, mas em blocos separados: (10, 6) e (0, 4). Nenhum sozinho tem 8 bytes, então o pedido falha — mesmo havendo espaço de sobra. Isso é <strong>fragmentação</strong>, o problema que o próximo capítulo (fusão de blocos) resolve.',
+    acoes:[{op:'alocar',tamanho:4},{op:'alocar',tamanho:6},{op:'liberar',endereco:0},{op:'alocar',tamanho:8,esperaErro:true}]
+  }
+];
+let memPassoAtual=0;
+
+function irParaPasso(n){
+  memPassoAtual=Math.max(0,Math.min(MEM_PASSOS.length,n));
+
+  document.getElementById('mem-size-in').value=16;
+  document.getElementById('mem-size-slide').value=16;
+  resetMemoria();
+
+  if(memPassoAtual<MEM_PASSOS.length){
+    const passo=MEM_PASSOS[memPassoAtual];
+    for(const acao of passo.acoes){
+      try{
+        if(acao.op==='alocar')memAlocar(acao.tamanho);
+        else if(acao.op==='liberar')memLiberar(acao.endereco);
+      }catch(e){
+        if(acao.esperaErro)mostrarErroMem(e.message+' — mesmo havendo 4 + 6 = 10 bytes livres no total, eles estão em blocos separados. Isso é fragmentação.');
+      }
+    }
+    document.getElementById('mem-step-counter').textContent=`Passo ${memPassoAtual+1} de ${MEM_PASSOS.length}`;
+    document.getElementById('mem-step-title').textContent=passo.titulo;
+    document.getElementById('mem-step-text').innerHTML=passo.texto;
+  }else{
+    esconderErroMem();
+    document.getElementById('mem-step-counter').textContent='Modo livre';
+    document.getElementById('mem-step-title').textContent='6. Agora é sua vez';
+    document.getElementById('mem-step-text').innerHTML='Use os controles abaixo para alocar, liberar e testar a fragmentação por conta própria — o mesmo simulador, sem roteiro.';
+  }
+
+  renderMemoria();
+  document.getElementById('mem-step-prev').disabled=memPassoAtual===0;
+  document.getElementById('mem-step-next').disabled=memPassoAtual===MEM_PASSOS.length;
+}
+function passoAnterior(){irParaPasso(memPassoAtual-1);}
+function passoProximo(){irParaPasso(memPassoAtual+1);}
+
 /* ── INIT ── */
-updateConverter();updateBitOps();selectChar(65);
+updateConverter();updateBitOps();selectChar(65);irParaPasso(0);
 </script>
 </body>
 </html>
